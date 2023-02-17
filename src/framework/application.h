@@ -12,6 +12,9 @@
 class Application
 {
 public:
+	//Lab3:
+	FloatImage zBuffer;
+
 
 	//Lab2:
 	Mesh* mesh_anna;

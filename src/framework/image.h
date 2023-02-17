@@ -112,8 +112,8 @@ public:
 	void ScanLineBresenham(int x0, int y0, int x1, int y1, std::vector<Cell>& AET );
 	void DrawHorizontal(int x0, int x1, int y, Color c);
 
-	void DrawTriangleInterpolated(const Vector3& p0, const Vector3& p1, const Vector3& p2, const Color& c0, const Color& c1, const Color& c2);
-	void DrawHorizontalInterpolated(int x0, int x1, int y, Vector3 p0, Vector2 v0, Vector2 v1, const Color& c0, const Color& c1, const Color& c2);
+	void DrawTriangleInterpolated(const Vector3& p0, const Vector3& p1, const Vector3& p2, const Color& c0, const Color& c1, const Color& c2, FloatImage* zBuffer);
+	void DrawHorizontalInterpolated(int x0, int x1, int y, Vector3 p0, Vector3 p1, Vector3 p2, const Color& c0, const Color& c1, const Color& c2, FloatImage* zBuffer);
 
 };
 

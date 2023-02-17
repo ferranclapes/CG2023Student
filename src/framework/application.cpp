@@ -17,6 +17,7 @@ Application::Application(const char* caption, int width, int height)
 	this->keystate = SDL_GetKeyboardState(nullptr);
 
 	this->framebuffer.Resize(w, h);
+	this->zBuffer.Resize(w, h);
 }
 
 Application::~Application()
@@ -36,15 +37,15 @@ void Application::Init(void)
 	bool mesh_l = mesh_lee->LoadOBJ("meshes/lee.obj");
 	bool mesh_a = mesh_anna->LoadOBJ("meshes/anna.obj");
 	bool mesh_c = mesh_cleo->LoadOBJ("meshes/cleo.obj");
-	if (/*toolbar_l == false || foto_l == false || */mesh_l == false || mesh_a == false)
+	if (/*toolbar_l == false || foto_l == false || */mesh_l == false || mesh_a == false|| mesh_c == false)
 	{
 		exit(0);
 	}
-	anna = Entity(mesh_anna, Vector3(10, -9, 70), 0, Vector3(1, 1, 1), Vector3(30, 30, 30));
+	anna = Entity(mesh_anna, Vector3(10, -9, -70), 0*DEG2RAD, Vector3(0, 1, 0), Vector3(30, 30, 30));
 	lee = Entity(mesh_lee, Vector3(0, -5, 0), 90 * DEG2RAD, Vector3(0, 1, 0), Vector3(15, 15, 15));
-	cleo = Entity(mesh_cleo, Vector3(-10, -9, 0), 180 * DEG2RAD, Vector3(0, 1, 0), Vector3(30, 30, 30));
+	cleo = Entity(mesh_cleo, Vector3(-10, -9, 0), 0 * DEG2RAD, Vector3(0, 1, 0), Vector3(30, 30, 30));
 	camera = Camera();
-	camera.LookAt(Vector3(0, 0, -30), Vector3(0, 0, 0), Vector3(0,1,0));
+	camera.LookAt(Vector3(0, 0, 30), Vector3(0, 0, 0), Vector3(0,1,0));
 	camera.SetOrthographic(-20, 20, 10, -5, 1, 100);
 
 	color = Color::WHITE;
@@ -172,9 +173,10 @@ void Application::Render(void)
 	}
 	*/
 	framebuffer.Fill(Color::BLACK);
-	anna.Render_3(&framebuffer, &camera, Color::RED);
-	lee.Render_3(&framebuffer, &camera, Color::BLUE);
-	cleo.Render_3(&framebuffer, &camera, Color::GREEN);
+	zBuffer.Fill(100.0);
+	anna.Render_3(&framebuffer, &camera, Color::RED, &zBuffer);
+	lee.Render_3(&framebuffer, &camera, Color::BLUE, &zBuffer);
+	cleo.Render_3(&framebuffer, &camera, Color::GREEN, &zBuffer);
 	framebuffer.Render();
 }
 

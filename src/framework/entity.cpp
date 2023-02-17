@@ -14,7 +14,7 @@ Entity::Entity(Mesh* mesh, Vector3 trans, float angle, Vector3 rot, Vector3 sca)
 
 	model_matrix.SetIdentity();
 	model_matrix.Scale(sca);
-	model_matrix.Rotate(angle * DEG2RAD, rot);
+	model_matrix.Rotate(angle, rot);
 	model_matrix.Translate(trans.x, trans.y, trans.z);
 }
 
@@ -110,7 +110,7 @@ void Entity::Update(Vector3 trans, float angle, Vector3 rot, Vector3 sca, float 
 	model_matrix.ScaleLocal(sca);
 }
 
-void Entity::Render_3(Image* framebuffer, Camera* camera, const Color& c)
+void Entity::Render_3(Image* framebuffer, Camera* camera, const Color& c, FloatImage* zBuffer)
 {
 	const std::vector<Vector3>& vertices = mesh->GetVertices();
 
@@ -143,7 +143,7 @@ void Entity::Render_3(Image* framebuffer, Camera* camera, const Color& c)
 
 			if (negZ == false || negZ_1 == false || negZ_2 == false)
 			{
-				framebuffer->DrawTriangleInterpolated(vertex_screen, vertex_screen_1, vertex_screen_2, Color::RED, Color::BLUE, Color::GREEN);
+				framebuffer->DrawTriangleInterpolated(vertex_screen, vertex_screen_1, vertex_screen_2, Color::RED, Color::BLUE, Color::GREEN, zBuffer);
 			}
 		}
 		else
@@ -170,7 +170,7 @@ void Entity::Render_3(Image* framebuffer, Camera* camera, const Color& c)
 
 			if (out == false || out_1 == false || out_2 == false)
 			{
-				framebuffer->DrawTriangleInterpolated(vertex_screen, vertex_screen_1, vertex_screen_2, Color::RED, Color::BLUE, Color::GREEN);
+				framebuffer->DrawTriangleInterpolated(vertex_screen, vertex_screen_1, vertex_screen_2, Color::RED, Color::BLUE, Color::GREEN, zBuffer);
 			}
 		}
 

@@ -830,7 +830,7 @@ void Image::ScanLineBresenham(int x0, int y0, int x1, int y1, std::vector<Cell>&
 	}
 }
 
-void Image::DrawTriangleInterpolated(const Vector3& p0, const Vector3& p1, const Vector3& p2, const Color& c0, const Color& c1, const Color& c2)
+void Image::DrawTriangleInterpolated(const Vector3& p0, const Vector3& p1, const Vector3& p2, const Color& c0, const Color& c1, const Color& c2, FloatImage* zBuffer)
 {
 	std::vector<Cell> AET;
 	AET.resize(this->height);
@@ -844,19 +844,19 @@ void Image::DrawTriangleInterpolated(const Vector3& p0, const Vector3& p1, const
 	ScanLineBresenham(p0.x, p0.y, p2.x, p2.y, AET);
 	ScanLineBresenham(p1.x, p1.y, p2.x, p2.y, AET);
 
-	Vector2 v0 = Vector2(p1.x - p0.x, p1.y - p0.y);
-	Vector2 v1 = Vector2(p2.x - p0.x, p2.y - p0.y);
 	for (int j = 0; j < AET.size(); j++)
 	{
 		if (AET[j].max_X > AET[j].min_X)
 		{
-			this->DrawHorizontalInterpolated(AET[j].min_X, AET[j].max_X, j, p0, v0, v1, c0, c1, c2);
+			this->DrawHorizontalInterpolated(AET[j].min_X, AET[j].max_X, j, p0, p1, p2, c0, c1, c2, zBuffer);
 		}
 	}
 }
 
-void Image::DrawHorizontalInterpolated(int x0, int x1, int y, Vector3 p0, Vector2 v0, Vector2 v1, const Color& c0, const Color& c1, const Color& c2)
+void Image::DrawHorizontalInterpolated(int x0, int x1, int y, Vector3 p0, Vector3 p1, Vector3 p2, const Color& c0, const Color& c1, const Color& c2, FloatImage* zBuffer)
 {
+	Vector2 v0 = Vector2(p1.x - p0.x, p1.y - p0.y);
+	Vector2 v1 = Vector2(p2.x - p0.x, p2.y - p0.y);
 	for (int i = x0; i <= x1; i++)
 	{
 		Vector2 v2 = Vector2(i - p0.x, y - p0.y);
@@ -877,7 +877,13 @@ void Image::DrawHorizontalInterpolated(int x0, int x1, int y, Vector3 p0, Vector
 		v = weights.y / sum;
 		w = weights.z / sum;
 		Color c = c0 * u + c1 * v + c2 * w;
+		float z = p0.z * u + p1.z * v + p2.z * w;
+		if (zBuffer->GetPixel(i,y) > z)
+		{
+			SetPixelSafe(i, y, c);
+			zBuffer->SetPixel(i, y, z);
 
-		SetPixelSafe(i, y, c);
+		}
+
 	}
 }
