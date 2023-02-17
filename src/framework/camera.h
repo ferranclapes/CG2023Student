@@ -47,6 +47,8 @@ public:
 	// Translate and rotate the camera
 	void Move(Vector3 delta);
 	void Rotate(float angle, const Vector3& axis);
+	void Zoom(Vector3 delta);
+	void Orbit(float angle, const Vector3& axis);
 
 	// Transform a local camera vector to world coordinates
 	Vector3 GetLocalVector(const Vector3& v);
@@ -67,4 +69,6 @@ public:
 	void UpdateViewProjectionMatrix();
 
 	Matrix44 GetViewProjectionMatrix();
+
+	Vector3 OrthogonalVector(Vector3 pos, bool& out);
 };

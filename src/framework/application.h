@@ -7,11 +7,52 @@
 #include "main/includes.h"
 #include "framework.h"
 #include "image.h"
+#include "entity.h"
 
 class Application
 {
 public:
 
+	//Lab2:
+	Mesh* mesh_anna;
+	Mesh* mesh_lee;
+	Mesh* mesh_cleo;
+	Entity anna;
+	Entity lee;
+	Entity cleo;
+	Camera camera;
+
+	bool is_t;
+
+	float desp;
+	float scal;
+
+	float fov;
+
+	int menu_c;
+	int is_near;
+
+	//Lab 1 i defoult:
+	int menu;
+	int brush_size;
+	Vector2* pos;
+	Vector2* pos0;
+	Image toolbar;
+	Image fruits;
+	Color color;
+	static const int num_particle = 700;
+	bool es_primer_clic;
+
+	struct Particle {
+		int quartil;
+		Vector2 pos;
+		Vector2 origin;
+		Vector2 dest;
+		Vector2 vel;
+		Vector2 size;
+		Color color;
+	};
+	Particle particles[num_particle] = {};
 	// Window
 
 	SDL_Window* window;
@@ -49,6 +90,8 @@ public:
 		glViewport( 0,0, width, height );
 		this->window_width = width;
 		this->window_height = height;
+		//this->framebuffer.width = width-1;
+		//this->framebuffer.height = height-1;
 	}
 
 	Vector2 GetWindowSize()

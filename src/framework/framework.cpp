@@ -178,6 +178,13 @@ void Matrix44::Rotate( float angle_in_rad, const Vector3& axis )
 	*this = *this * R;
 }
 
+void Matrix44::Scale(const Vector3& sca)
+{
+	Matrix44 S;
+	S.SetScale(sca);
+	*this = *this * S;
+}
+
 Vector3 Matrix44::RotateVector(const Vector3& v)
 {
 	Matrix44 temp = *this;
@@ -199,6 +206,13 @@ void Matrix44::RotateLocal( float angle_in_rad, const Vector3& axis )
 	Matrix44 R;
 	R.SetRotation(angle_in_rad, axis);
 	*this = R * *this;
+}
+
+void Matrix44::ScaleLocal(const Vector3& sca)
+{
+	Matrix44 S;
+	S.SetScale(sca);
+	*this = S * *this;
 }
 
 //To create a traslation matrix
@@ -234,6 +248,14 @@ void Matrix44::SetRotation( float angle_in_rad, const Vector3& axis  )
 	M[2][2] = t * axis.z * axis.z + c;
 
 	M[3][3] = 1.0f;
+}
+
+void Matrix44::SetScale(Vector3 s)
+{
+	m[0] = s.x; m[4] = 0; m[8] = 0; m[12] = 0;
+	m[1] = 0; m[5] = s.y; m[9] = 0; m[13] = 0;
+	m[2] = 0; m[6] = 0; m[10] = s.z; m[14] = 0;
+	m[3] = 0; m[7] = 0; m[11] = 0; m[15] = 1;
 }
 
 Matrix44 Matrix44::GetRotationOnly()

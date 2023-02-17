@@ -1,0 +1,35 @@
+**DESCRIPCIÓ MEMBRES GRUP 39**
+
+//MEMBRE 1: 
+Nom: Ferran Clapés i Costa
+Nia:251856
+Correu: ferran.clapesi01@estudiant.upf.edu
+
+//MEMBRE 2: 
+Nom: Clara Jaurés Bancells
+Nia: 254177
+Correu: clara.jaures01@estudiant.upf.edu
+
+**LLISTAT D'INSTRUCCIONS PER L'ÚS DE LA NOSTRA APLICACIÓ**
+Al iniciar el programa es renderitzen 3 meshes animades.
+Per pausar l'animació cal premer la tecla "2".
+Si es vol tornar a reprendre l'animació cal premer la tecla "1".
+
+Per canviar el tipus de projecció s'utilitzen les tecles "o" i "p" respectivament.
+
+La camera pot moure's (moure eye i center a la vegada), rotar (moure center) i orbitar (moure eye). 
+Primer cal seleccionar el tipus de moviment: 
+	Tecla "m" per moure.
+	Tecla "r" per rotar.
+	Tecla "c" per orbitar.
+Un cop seleccionat el tipus de moviment només cal premer el botó esquerre del ratolí i arrestrar.
+També s'utilitza la rodeta del ratolí per fer zoom.
+
+Per canviar el far plane i el near plane primer cal seleccionar quin plane es vol moure:
+	Tecla "n" per near plane.
+	Tecla "f" per far plane.
+Un cop seleccionat només cal premer la tecla "+" per augmentar la distància a eye i la tecla "-" per reduir-la.
+
+En la projecció perspectiva es pot canviar el fov. Tecla "b" per augmentar-lo i tecla "s" per disminuir-lo.
+
+Per tornar als valors per defecte cal premer la tecla "0"

@@ -206,14 +206,17 @@ class Matrix44
 		// Transform using world coordinates
 		void Translate(float x, float y, float z);
 		void Rotate( float angle_in_rad, const Vector3& axis  );
+		void Scale(const Vector3& sca);
 
 		// Transform using local coordinates
 		void TranslateLocal(float x, float y, float z);
 		void RotateLocal( float angle_in_rad, const Vector3& axis  );
+		void ScaleLocal(const Vector3& sca);
 
 		// Create a transformation matrix from scratch
 		void SetTranslation(float x, float y, float z);
 		void SetRotation( float angle_in_rad, const Vector3& axis );
+		void SetScale(Vector3 s);
 
 		bool GetXYZ(float* euler) const;
 

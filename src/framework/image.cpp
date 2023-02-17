@@ -393,3 +393,423 @@ void FloatImage::Resize(unsigned int width, unsigned int height)
 	this->height = height;
 	pixels = new_pixels;
 }
+
+//A PARTIR D'AQUI COMENÇA EL CODI ESCRIT PER L'ALUMNE
+
+//Dibuixa una línia utilitzant l'algoritme DDA
+void Image::DrawLineDDA(int x0, int y0, int x, int y, const Color& c)
+
+{
+	int dx = x - x0;
+	int dy = y - y0;
+	int d = std::max(abs(dx), abs(dy));
+
+	Vector2* v = new Vector2(float(dx) / float(d), float(dy) / float(d));
+	Vector2* pos = new Vector2(float(x0), float(y0));
+
+	for (int i = 0; i <= d; i++)
+	{
+		SetPixelSafe(floor(pos->x), floor(pos->y), c);
+		pos->operator+=(*v);
+	}
+}
+
+//Dibuixa una línia utilitzant l'algoritme Bresenham
+void Image::DrawLineBresenham(int x0, int y0, int x1, int y1, const Color& c)
+
+{
+	int dx, dy, inc_E, inc_NE, d, x, y;
+	if (abs(x1 - x0) >= abs(y1 - y0))
+	{								//Aquí els octans 1, 4, 5 i 8
+		if (x0 > x1)
+		{					//Per als octans 4 i 5
+			int aux_x = x0;
+			x0 = x1;
+			x1 = aux_x;
+			int aux_y = y0;
+			y0 = y1;
+			y1 = aux_y;
+		}
+
+		dx = x1 - x0;
+		dy = y1 - y0;
+		inc_E = 2 * dy;
+		if (dy < 0)
+		{							//En cas dels octans 8 i 4
+			d = 2 * dy + dx;
+			inc_NE = 2 * (dy + dx);
+		}
+		else
+		{							//En cas dels octans 1 i 5
+			d = 2 * dy - dx;
+			inc_NE = 2 * (dy - dx);
+		}
+		x = x0;
+		y = y0;
+		SetPixelSafe(x, y, c);
+		while (x < x1)
+		{
+			if (d <= 0)
+			{					//Si el punt està per sota la meitat
+				x = x + 1;
+				if (dy < 0)
+				{
+					y = y - 1;		//En cas dels octans 8 i 5
+					d = d + inc_NE;
+				}
+				else
+				{
+					d = d + inc_E;	//En cas dels octans 1 i 4
+				}
+			}
+			else
+			{					//Si el punt està per sobre la meitat
+				x = x + 1;
+				if (dy < 0)
+				{					//En cas dels octans 8 i 5
+					d = d + inc_E;
+				}
+				else
+				{					//En cas dels octans 1 i 4
+					y = y + 1;
+					d = d + inc_NE;
+				}
+
+			}
+			SetPixelSafe(x, y, c);
+		}
+	}
+	else
+	{					//Aquí els octans 2, 3, 6 i 7
+		if (y0 > y1)
+		{						//Per els octans 6 i 7
+			int aux_y = y0;
+			y0 = y1;
+			y1 = aux_y;
+			int aux_x = x0;
+			x0 = x1;
+			x1 = aux_x;
+		}
+
+		dx = x1 - x0;
+		dy = y1 - y0;
+		inc_E = 2 * (-dx);
+		if (dx < 0)
+		{					//Pels octans 3 i 6									
+			d = -2 * dx - dy;
+			inc_NE = 2 * (-dx - dy);
+		}
+		else
+		{				//Pels octans 2 i 7
+			d = dy - 2 * dx;
+			inc_NE = 2 * (dy - dx);
+		}
+		x = x0;
+		y = y0;
+		SetPixelSafe(x, y, c);
+		while (y < y1)
+		{
+			if (d <= 0)
+			{					//Si el punt està per sota la meitat
+				y = y + 1;
+				if (dx < 0)
+				{					//En cas dels octans 3 i 6
+					d = d + inc_E;
+				}
+				else
+				{					//En cas dels octans 2 i 7
+					x = x + 1;
+					d = d + inc_NE;
+				}
+			}
+			else
+			{					//Si el punt està per sobre la meitat
+				y = y + 1;
+				if (dx < 0)
+				{					//En cas dels octans 3 i 6
+					x = x - 1;
+					d = d + inc_NE;
+				}
+				else
+				{					//En cas dels octans 2 i 7
+					d = d + inc_E;
+				}
+			}
+			SetPixelSafe(x, y, c);
+
+		}
+	}
+}
+
+//Dibuixar un cercle amb l'algoritme Bresenham
+void Image::DrawCircle(int x0, int y0, int r, const Color& c, bool fill)
+{
+	int x, x2, x3, y, y2, y3; int v;
+	x = x0;
+	x2 = x0 + r;
+	x3 = x0 - r;	//Simetrica a x2 centrada en la recta vertical que passa per r
+	y = y0 + r;
+	y2 = y0;
+	y3 = y0 - r;	//Simetrica a y centrada en la recta y = r
+	v = 1 - r;
+
+	int n = 0;
+	SetPixelSafe(x2, y2, c);				//1r octau
+	SetPixelSafe(x, y, c);					//2n octau
+	SetPixelSafe(x - (2 * n), y, c);		//3r octau --> 2*n pq hem d'arribar a 0 i després arribar a la posició simètrica en negatiu
+	SetPixelSafe(x3, y2, c);				//4t octau
+	SetPixelSafe(x3, y2 - (2 * n), c);		//5è octau
+	SetPixelSafe(x, y3, c);					//6è octau
+	SetPixelSafe(x - (2 * n), y3, c);			//7è octau
+	SetPixelSafe(x2, y2 - (2 * n), c);		//8è octau
+	if (fill == true)
+	{									//Emplenar el cercle
+		int aux_x = x - (2 * n);
+		int aux_x3 = x3;
+		while (aux_x < x)
+		{								//Emplenar els octaus 2, 3, 6 i 7
+			SetPixelSafe(aux_x, y, c);
+			SetPixelSafe(aux_x, y3, c);
+			aux_x++;
+		}
+		while (aux_x3 < x2)
+		{								//Emplenar els octaus 1, 4, 5 i 8
+			SetPixelSafe(aux_x3, y2, c);
+			SetPixelSafe(aux_x3, y2 - (2 * n), c);
+			aux_x3++;
+		}
+	}
+
+	while ((y - y0) > (x - x0))
+	{
+		if (v < 0)
+		{					//Si el píxel ha de ser per sobre
+			v = v + 2 * (x - x0) + 3;
+			x++;
+			y2++;
+		}
+		else
+		{					//Si el píxel ha de ser per sota
+			v = v + 2 * ((x - x0) - (y - y0)) + 5;
+			x++;
+			x2--;
+			x3++;
+			y--;
+			y2++;
+			y3++;
+		}
+		n++;
+		SetPixelSafe(x2, y2, c);				//1r octau
+		SetPixelSafe(x, y, c);					//2n octau
+		SetPixelSafe(x - (2 * n), y, c);		//3r octau
+		SetPixelSafe(x3, y2, c);				//4t octau
+		SetPixelSafe(x3, y2 - (2 * n), c);		//5è octau
+		SetPixelSafe(x, y3, c);					//6è octau
+		SetPixelSafe(x - (2 * n), y3, c);		//7è octau
+		SetPixelSafe(x2, y2 - (2 * n), c);		//8è octau
+
+		if (fill == true)
+		{									//Emplenar el cercle
+			int aux_x = x - (2 * n);
+			int aux_x3 = x3;
+			while (aux_x < x)
+			{								//Emplenar els octaus 2, 3, 6 i 7
+				SetPixelSafe(aux_x, y, c);
+				SetPixelSafe(aux_x, y3, c);
+				aux_x++;
+			}
+			while (aux_x3 < x2)
+			{								//Emplenar els octaus 1, 4, 5 i 8
+				SetPixelSafe(aux_x3, y2, c);
+				SetPixelSafe(aux_x3, y2 - (2 * n), c);
+				aux_x3++;
+			}
+		}
+
+	}
+}
+
+
+//Dibuixar una Image pixel per pixel
+void Image::DrawImagePixels(const Image& image, int x, int y, bool top)
+{
+	if (top == false)
+	{
+		for (int h = y; h < image.height + y; h++)
+		{
+			for (int w = x; w < image.width + x; w++)
+			{
+				SetPixelSafe(w, h, image.GetPixel(w - x, h - y));
+			}
+		}
+	}
+	else
+	{
+		for (int h = this->height - y; h > this->height - image.height - y; h--)
+		{
+			for (int w = x; w < image.width; w++)
+			{
+				SetPixelSafe(w, h, image.GetPixel(w - x, (h - this->height + y) * -1));		//No podem utilitzar abs perque this->height és unsigned int
+			}
+		}
+	}
+}
+
+void Image::DrawTriangle(const Vector2& p0, const Vector2& p1, const Vector2& p2, const Color& color)
+{
+	std::vector<Cell> AET;
+	AET.resize(this->height);
+
+	for (int i = 0; i < AET.size(); i++)
+	{
+		AET[i].max_X = -1;
+		AET[i].min_X = this->width + 20;
+	}
+	ScanLineBresenham(p0.x, p0.y, p1.x, p1.y, AET);
+	ScanLineBresenham(p0.x, p0.y, p2.x, p2.y, AET);
+	ScanLineBresenham(p1.x, p1.y, p2.x, p2.y, AET);
+	for (int j = 0; j < AET.size(); j++)
+	{
+		if (AET[j].max_X > AET[j].min_X)
+		{
+			this->DrawHorizontal(AET[j].min_X, AET[j].max_X, j, color);
+		}
+	}
+}
+
+void Image::DrawHorizontal(int x0, int x1, int y, Color c)
+{
+	for (int i = x0; i <= x1; i++)
+	{
+		SetPixel(i, y, c);
+	}
+}
+
+void Image::ScanLineBresenham(int x0, int y0, int x1, int y1, std::vector<Cell>& AET)
+{
+	int dx, dy, inc_E, inc_NE, d, x, y;
+	if (abs(x1 - x0) >= abs(y1 - y0))
+	{								//Aquí els octans 1, 4, 5 i 8
+		if (x0 > x1)
+		{					//Per als octans 4 i 5
+			int aux_x = x0;
+			x0 = x1;
+			x1 = aux_x;
+			int aux_y = y0;
+			y0 = y1;
+			y1 = aux_y;
+		}
+
+		dx = x1 - x0;
+		dy = y1 - y0;
+		inc_E = 2 * dy;
+		if (dy < 0)
+		{							//En cas dels octans 8 i 4
+			d = 2 * dy + dx;
+			inc_NE = 2 * (dy + dx);
+		}
+		else
+		{							//En cas dels octans 1 i 5
+			d = 2 * dy - dx;
+			inc_NE = 2 * (dy - dx);
+		}
+		x = x0;
+		y = y0;
+		AET[y].max_X = std::max(AET[y].max_X, x);
+		AET[y].min_X = std::min(AET[y].min_X, x);
+		while (x < x1)
+		{
+			if (d <= 0)
+			{					//Si el punt està per sota la meitat
+				x = x + 1;
+				if (dy < 0)
+				{
+					y = y - 1;		//En cas dels octans 8 i 5
+					d = d + inc_NE;
+				}
+				else
+				{
+					d = d + inc_E;	//En cas dels octans 1 i 4
+				}
+			}
+			else
+			{					//Si el punt està per sobre la meitat
+				x = x + 1;
+				if (dy < 0)
+				{					//En cas dels octans 8 i 5
+					d = d + inc_E;
+				}
+				else
+				{					//En cas dels octans 1 i 4
+					y = y + 1;
+					d = d + inc_NE;
+				}
+
+			}
+			AET[y].max_X = std::max(AET[y].max_X, x);
+			AET[y].min_X = std::min(AET[y].min_X, x);
+		}
+	}
+	else
+	{					//Aquí els octans 2, 3, 6 i 7
+		if (y0 > y1)
+		{						//Per els octans 6 i 7
+			int aux_y = y0;
+			y0 = y1;
+			y1 = aux_y;
+			int aux_x = x0;
+			x0 = x1;
+			x1 = aux_x;
+		}
+
+		dx = x1 - x0;
+		dy = y1 - y0;
+		inc_E = 2 * (-dx);
+		if (dx < 0)
+		{					//Pels octans 3 i 6									
+			d = -2 * dx - dy;
+			inc_NE = 2 * (-dx - dy);
+		}
+		else
+		{				//Pels octans 2 i 7
+			d = dy - 2 * dx;
+			inc_NE = 2 * (dy - dx);
+		}
+		x = x0;
+		y = y0;
+		AET[y].max_X = std::max(AET[y].max_X, x);
+		AET[y].min_X = std::min(AET[y].min_X, x);
+		while (y < y1)
+		{
+			if (d <= 0)
+			{					//Si el punt està per sota la meitat
+				y = y + 1;
+				if (dx < 0)
+				{					//En cas dels octans 3 i 6
+					d = d + inc_E;
+				}
+				else
+				{					//En cas dels octans 2 i 7
+					x = x + 1;
+					d = d + inc_NE;
+				}
+			}
+			else
+			{					//Si el punt està per sobre la meitat
+				y = y + 1;
+				if (dx < 0)
+				{					//En cas dels octans 3 i 6
+					x = x - 1;
+					d = d + inc_NE;
+				}
+				else
+				{					//En cas dels octans 2 i 7
+					d = d + inc_E;
+				}
+			}
+			AET[y].max_X = std::max(AET[y].max_X, x);
+			AET[y].min_X = std::min(AET[y].min_X, x);
+
+		}
+	}
+}

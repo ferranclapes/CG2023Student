@@ -94,6 +94,24 @@ public:
 		return *this;
 	}
 	#endif
+
+	//A PARTIR D'AQUÍ COMENÇA EL CODI ESCRIT PER L'ALUMNE
+
+
+	void DrawLineDDA(int x0, int y0, int x, int y, const Color& c);
+	void DrawLineBresenham(int x0, int y0, int x1, int y1, const Color& c);
+	void DrawCircle(int x0, int y0, int r, const Color& c, bool fill);
+	void DrawImagePixels(const Image& image, int x, int y, bool top);
+
+	typedef struct sCell {
+		int min_X;
+		int max_X;
+	}Cell;
+
+	void DrawTriangle(const Vector2& p0, const Vector2& p1, const Vector2& p2, const Color& color);
+	void ScanLineBresenham(int x0, int y0, int x1, int y1, std::vector<Cell>& AET );
+	void DrawHorizontal(int x0, int x1, int y, Color c);
+
 };
 
 // Image storing one float per pixel instead of a 3 or 4 component Color
