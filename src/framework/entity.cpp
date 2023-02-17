@@ -116,7 +116,7 @@ void Entity::Render_3(Image* framebuffer, Camera* camera, const Color& c, FloatI
 
 	for (int i = 0; i < this->mesh->GetVertices().size(); i += 3)
 	{
-		if (camera->type == camera->PERSPECTIVE)
+		if (camera->type == Camera::PERSPECTIVE)
 		{
 			Vector4 vertex = Vector4(vertices[i].x, vertices[i].y, vertices[i].z, 1);
 			Vector4 vertex_world = this->model_matrix * vertex;

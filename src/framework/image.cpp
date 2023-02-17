@@ -857,9 +857,9 @@ void Image::DrawHorizontalInterpolated(int x0, int x1, int y, Vector3 p0, Vector
 {
 	Vector2 v0 = Vector2(p1.x - p0.x, p1.y - p0.y);
 	Vector2 v1 = Vector2(p2.x - p0.x, p2.y - p0.y);
-	for (int i = x0; i <= x1; i++)
+	for (int x = x0; x <= x1; x++)
 	{
-		Vector2 v2 = Vector2(i - p0.x, y - p0.y);
+		Vector2 v2 = Vector2(x - p0.x, y - p0.y);
 
 		float d00 = v0.Dot(v0);
 		float d01 = v0.Dot(v1);
@@ -878,12 +878,10 @@ void Image::DrawHorizontalInterpolated(int x0, int x1, int y, Vector3 p0, Vector
 		w = weights.z / sum;
 		Color c = c0 * u + c1 * v + c2 * w;
 		float z = p0.z * u + p1.z * v + p2.z * w;
-		if (zBuffer->GetPixel(i,y) > z)
+		if (zBuffer->GetPixel(x,y) > z)
 		{
-			SetPixelSafe(i, y, c);
-			zBuffer->SetPixel(i, y, z);
-
+			SetPixelSafe(x, y, c);
+			zBuffer->SetPixel(x, y, z);
 		}
-
 	}
 }
