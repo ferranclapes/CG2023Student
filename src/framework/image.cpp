@@ -681,7 +681,7 @@ void Image::DrawHorizontal(int x0, int x1, int y, Color c)
 {
 	for (int i = x0; i <= x1; i++)
 	{
-		SetPixel(i, y, c);
+		SetPixelSafe(i, y, c);
 	}
 }
 
@@ -715,8 +715,12 @@ void Image::ScanLineBresenham(int x0, int y0, int x1, int y1, std::vector<Cell>&
 		}
 		x = x0;
 		y = y0;
-		AET[y].max_X = std::max(AET[y].max_X, x);
-		AET[y].min_X = std::min(AET[y].min_X, x);
+		if (y < this->height)
+		{
+			AET[y].max_X = std::max(AET[y].max_X, x);
+			AET[y].min_X = std::min(AET[y].min_X, x);
+
+		}
 		while (x < x1)
 		{
 			if (d <= 0)
@@ -746,8 +750,12 @@ void Image::ScanLineBresenham(int x0, int y0, int x1, int y1, std::vector<Cell>&
 				}
 
 			}
-			AET[y].max_X = std::max(AET[y].max_X, x);
-			AET[y].min_X = std::min(AET[y].min_X, x);
+			if (y < this->height)
+			{
+				AET[y].max_X = std::max(AET[y].max_X, x);
+				AET[y].min_X = std::min(AET[y].min_X, x);
+
+			}
 		}
 	}
 	else
@@ -777,8 +785,12 @@ void Image::ScanLineBresenham(int x0, int y0, int x1, int y1, std::vector<Cell>&
 		}
 		x = x0;
 		y = y0;
-		AET[y].max_X = std::max(AET[y].max_X, x);
-		AET[y].min_X = std::min(AET[y].min_X, x);
+		if (y < this->height)
+		{
+			AET[y].max_X = std::max(AET[y].max_X, x);
+			AET[y].min_X = std::min(AET[y].min_X, x);
+
+		}
 		while (y < y1)
 		{
 			if (d <= 0)
@@ -807,9 +819,65 @@ void Image::ScanLineBresenham(int x0, int y0, int x1, int y1, std::vector<Cell>&
 					d = d + inc_E;
 				}
 			}
-			AET[y].max_X = std::max(AET[y].max_X, x);
-			AET[y].min_X = std::min(AET[y].min_X, x);
+			if (y < this->height)
+			{
+				AET[y].max_X = std::max(AET[y].max_X, x);
+				AET[y].min_X = std::min(AET[y].min_X, x);
+
+			}
 
 		}
+	}
+}
+
+void Image::DrawTriangleInterpolated(const Vector3& p0, const Vector3& p1, const Vector3& p2, const Color& c0, const Color& c1, const Color& c2)
+{
+	std::vector<Cell> AET;
+	AET.resize(this->height);
+
+	for (int i = 0; i < AET.size(); i++)
+	{
+		AET[i].max_X = -1;
+		AET[i].min_X = this->width + 20;
+	}
+	ScanLineBresenham(p0.x, p0.y, p1.x, p1.y, AET);
+	ScanLineBresenham(p0.x, p0.y, p2.x, p2.y, AET);
+	ScanLineBresenham(p1.x, p1.y, p2.x, p2.y, AET);
+
+	Vector2 v0 = Vector2(p1.x - p0.x, p1.y - p0.y);
+	Vector2 v1 = Vector2(p2.x - p0.x, p2.y - p0.y);
+	for (int j = 0; j < AET.size(); j++)
+	{
+		if (AET[j].max_X > AET[j].min_X)
+		{
+			this->DrawHorizontalInterpolated(AET[j].min_X, AET[j].max_X, j, p0, v0, v1, c0, c1, c2);
+		}
+	}
+}
+
+void Image::DrawHorizontalInterpolated(int x0, int x1, int y, Vector3 p0, Vector2 v0, Vector2 v1, const Color& c0, const Color& c1, const Color& c2)
+{
+	for (int i = x0; i <= x1; i++)
+	{
+		Vector2 v2 = Vector2(i - p0.x, y - p0.y);
+
+		float d00 = v0.Dot(v0);
+		float d01 = v0.Dot(v1);
+		float d11 = v1.Dot(v1);
+		float d20 = v2.Dot(v0);
+		float d21 = v2.Dot(v1);
+		float denom = d00 * d11 - d01 * d01;
+		float v = (d11 * d20 - d01 * d21) / denom;
+		float w = (d00 * d21 - d01 * d20) / denom;
+		float u = 1.0 - v - w;
+		Vector3 weights = Vector3(u, v, w);
+		float sum = v + u + w;
+		weights.Clamp(0,1);
+		u = weights.x / sum;
+		v = weights.y / sum;
+		w = weights.z / sum;
+		Color c = c0 * u + c1 * v + c2 * w;
+
+		SetPixelSafe(i, y, c);
 	}
 }

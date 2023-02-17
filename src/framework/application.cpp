@@ -172,9 +172,9 @@ void Application::Render(void)
 	}
 	*/
 	framebuffer.Fill(Color::BLACK);
-	anna.Render(&framebuffer, &camera, Color::RED);
-	lee.Render(&framebuffer, &camera, Color::BLUE);
-	cleo.Render(&framebuffer, &camera, Color::GREEN);
+	anna.Render_3(&framebuffer, &camera, Color::RED);
+	lee.Render_3(&framebuffer, &camera, Color::BLUE);
+	cleo.Render_3(&framebuffer, &camera, Color::GREEN);
 	framebuffer.Render();
 }
 
