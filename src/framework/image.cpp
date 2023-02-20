@@ -870,6 +870,7 @@ void Image::DrawHorizontalInterpolated(int x0, int x1, int y, Vector3 p0, Vector
 		float v = (d11 * d20 - d01 * d21) / denom;
 		float w = (d00 * d21 - d01 * d20) / denom;
 		float u = 1.0 - v - w;
+		float z = p0.z * u + p1.z * v + p2.z * w;
 		Vector3 weights = Vector3(u, v, w);
 		float sum = v + u + w;
 		weights.Clamp(0,1);
@@ -877,7 +878,6 @@ void Image::DrawHorizontalInterpolated(int x0, int x1, int y, Vector3 p0, Vector
 		v = weights.y / sum;
 		w = weights.z / sum;
 		Color c = c0 * u + c1 * v + c2 * w;
-		float z = p0.z * u + p1.z * v + p2.z * w;
 		if (zBuffer->GetPixel(x,y) > z)
 		{
 			SetPixelSafe(x, y, c);
