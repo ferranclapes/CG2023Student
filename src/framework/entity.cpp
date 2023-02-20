@@ -122,7 +122,6 @@ void Entity::Render_3(Image* framebuffer, Camera* camera, const Color& c, FloatI
 			Vector4 vertex_world = this->model_matrix * vertex;
 			bool negZ;
 			Vector3 vertex_clip = camera->ProjectVector(vertex_world.GetVector3(), negZ);
-			vertex_clip = vertex_clip.Normalize();
 			Vector3 vertex_screen = Vector3(((vertex_clip.x + 1) / 2) * (framebuffer->width - 1), ((vertex_clip.y + 1) / 2) * (framebuffer->height - 1), vertex_clip.z);
 
 
@@ -130,7 +129,6 @@ void Entity::Render_3(Image* framebuffer, Camera* camera, const Color& c, FloatI
 			Vector4 vertex_world_1 = this->model_matrix * vertex_1;
 			bool negZ_1;
 			Vector3 vertex_clip_1 = camera->ProjectVector(vertex_world_1.GetVector3(), negZ_1);
-			vertex_clip_1 = vertex_clip_1.Normalize();
 			Vector3 vertex_screen_1 = Vector3(((vertex_clip_1.x + 1) / 2) * (framebuffer->width - 1), ((vertex_clip_1.y + 1) / 2) * (framebuffer->height - 1), vertex_clip_1.z);
 
 
@@ -138,7 +136,6 @@ void Entity::Render_3(Image* framebuffer, Camera* camera, const Color& c, FloatI
 			Vector4 vertex_world_2 = this->model_matrix * vertex_2;
 			bool negZ_2;
 			Vector3 vertex_clip_2 = camera->ProjectVector(vertex_world_2.GetVector3(), negZ_2);
-			vertex_clip_2 = vertex_clip_2.Normalize();
 			Vector3 vertex_screen_2 = Vector3(((vertex_clip_2.x + 1) / 2) * (framebuffer->width - 1), ((vertex_clip_2.y + 1) / 2) * (framebuffer->height - 1), vertex_clip_2.z);
 
 			if (negZ == false || negZ_1 == false || negZ_2 == false)
