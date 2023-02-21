@@ -108,12 +108,18 @@ public:
 		int max_X;
 	}Cell;
 
-	void DrawTriangle(const Vector2& p0, const Vector2& p1, const Vector2& p2, const Color& color);
+	void DrawTriangle(const Vector3& p0, const Vector3& p1, const Vector3& p2, const Color& color);
 	void ScanLineBresenham(int x0, int y0, int x1, int y1, std::vector<Cell>& AET );
 	void DrawHorizontal(int x0, int x1, int y, Color c);
 
-	void DrawTriangleInterpolated(const Vector3& p0, const Vector3& p1, const Vector3& p2, const Color& c0, const Color& c1, const Color& c2, FloatImage* zBuffer);
-	void DrawHorizontalInterpolated(int x0, int x1, int y, Vector3 p0, Vector3 p1, Vector3 p2, const Color& c0, const Color& c1, const Color& c2, FloatImage* zBuffer);
+
+	void DrawTriangle(const Vector3& p0, const Vector3& p1, const Vector3& p2, const Color& c0, const Color& c1, const Color& c2);
+	void DrawHorizontal(int x0, int x1, int y, Vector3 p0, Vector3 p1, Vector3 p2, const Color& c0, const Color& c1, const Color& c2);
+
+	void DrawTriangle(const Vector3& p0, const Vector3& p1, const Vector3& p2, const Color& c0, const Color& c1, const Color& c2, FloatImage* zBuffer);
+	void DrawHorizontal(int x0, int x1, int y, Vector3 p0, Vector3 p1, Vector3 p2, const Color& c0, const Color& c1, const Color& c2, FloatImage* zBuffer);
+
+	
 
 };
 

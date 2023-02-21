@@ -655,7 +655,9 @@ void Image::DrawImagePixels(const Image& image, int x, int y, bool top)
 	}
 }
 
-void Image::DrawTriangle(const Vector2& p0, const Vector2& p1, const Vector2& p2, const Color& color)
+
+//3.1 DIBUIXAR TRIANGLES
+void Image::DrawTriangle(const Vector3& p0, const Vector3& p1, const Vector3& p2, const Color& color)
 {
 	std::vector<Cell> AET;
 	AET.resize(this->height);
@@ -830,7 +832,66 @@ void Image::ScanLineBresenham(int x0, int y0, int x1, int y1, std::vector<Cell>&
 	}
 }
 
-void Image::DrawTriangleInterpolated(const Vector3& p0, const Vector3& p1, const Vector3& p2, const Color& c0, const Color& c1, const Color& c2, FloatImage* zBuffer)
+
+//3.2 INTERPOLAR ELS COLORS
+void Image::DrawTriangle(const Vector3& p0, const Vector3& p1, const Vector3& p2, const Color& c0, const Color& c1, const Color& c2)
+{
+
+	std::vector<Cell> AET;
+	AET.resize(this->height);
+
+	for (int i = 0; i < AET.size(); i++)
+	{
+		AET[i].max_X = -1;
+		AET[i].min_X = this->width + 20;
+	}
+	ScanLineBresenham(p0.x, p0.y, p1.x, p1.y, AET);
+	ScanLineBresenham(p0.x, p0.y, p2.x, p2.y, AET);
+	ScanLineBresenham(p1.x, p1.y, p2.x, p2.y, AET);
+
+	for (int j = 0; j < AET.size(); j++)
+	{
+		if (AET[j].max_X > AET[j].min_X)
+		{
+			this->DrawHorizontal(AET[j].min_X, AET[j].max_X, j, p0, p1, p2, c0, c1, c2);
+		}
+	}
+}
+
+void Image::DrawHorizontal(int x0, int x1, int y, Vector3 p0, Vector3 p1, Vector3 p2, const Color& c0, const Color& c1, const Color& c2)
+{
+	Vector2 v0 = Vector2(p1.x - p0.x, p1.y - p0.y);
+	Vector2 v1 = Vector2(p2.x - p0.x, p2.y - p0.y);
+	for (int x = x0; x <= x1; x++)
+	{
+		Vector2 v2 = Vector2(x - p0.x, y - p0.y);
+
+		float d00 = v0.Dot(v0);
+		float d01 = v0.Dot(v1);
+		float d11 = v1.Dot(v1);
+		float d20 = v2.Dot(v0);
+		float d21 = v2.Dot(v1);
+		float denom = d00 * d11 - d01 * d01;
+		float v = (d11 * d20 - d01 * d21) / denom;
+		float w = (d00 * d21 - d01 * d20) / denom;
+		float u = 1.0 - v - w;
+
+		Vector3 weights = Vector3(u, v, w);
+		float sum = v + u + w;
+		weights.Clamp(0, 1);
+		u = weights.x / sum;
+		v = weights.y / sum;
+		w = weights.z / sum;
+
+		Color c = c0 * u + c1 * v + c2 * w;
+		SetPixelSafe(x, y, c);
+		
+	}
+}
+
+
+//3.3 CONTEMPLAR EL Z-BUFFER
+void Image::DrawTriangle(const Vector3& p0, const Vector3& p1, const Vector3& p2, const Color& c0, const Color& c1, const Color& c2, FloatImage* zBuffer)
 {
 	std::vector<Cell> AET;
 	AET.resize(this->height);
@@ -848,12 +909,12 @@ void Image::DrawTriangleInterpolated(const Vector3& p0, const Vector3& p1, const
 	{
 		if (AET[j].max_X > AET[j].min_X)
 		{
-			this->DrawHorizontalInterpolated(AET[j].min_X, AET[j].max_X, j, p0, p1, p2, c0, c1, c2, zBuffer);
+			this->DrawHorizontal(AET[j].min_X, AET[j].max_X, j, p0, p1, p2, c0, c1, c2, zBuffer);
 		}
 	}
 }
 
-void Image::DrawHorizontalInterpolated(int x0, int x1, int y, Vector3 p0, Vector3 p1, Vector3 p2, const Color& c0, const Color& c1, const Color& c2, FloatImage* zBuffer)
+void Image::DrawHorizontal(int x0, int x1, int y, Vector3 p0, Vector3 p1, Vector3 p2, const Color& c0, const Color& c1, const Color& c2, FloatImage* zBuffer)
 {
 	Vector2 v0 = Vector2(p1.x - p0.x, p1.y - p0.y);
 	Vector2 v1 = Vector2(p2.x - p0.x, p2.y - p0.y);

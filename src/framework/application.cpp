@@ -174,9 +174,26 @@ void Application::Render(void)
 	*/
 	framebuffer.Fill(Color::BLACK);
 	zBuffer.Fill(100.0);
-	//anna.Render_3(&framebuffer, &camera, Color::RED, &zBuffer);
-	lee.Render_3(&framebuffer, &camera, Color::BLUE, &zBuffer);
-	//cleo.Render_3(&framebuffer, &camera, Color::GREEN, &zBuffer);
+	switch (menu)
+	{
+	case 1:
+		//anna.Render_3(&framebuffer, &camera, Color::RED, &zBuffer, menu);
+		lee.Render_3(&framebuffer, &camera, Color::BLUE, &zBuffer, menu);
+		//cleo.Render_3(&framebuffer, &camera, Color::GREEN, &zBuffer, menu);
+		break;
+
+	case 2:
+		//anna.Render_3(&framebuffer, &camera, Color::RED, &zBuffer, menu);
+		lee.Render_3(&framebuffer, &camera, Color::BLUE, &zBuffer, menu);
+		//cleo.Render_3(&framebuffer, &camera, Color::GREEN, &zBuffer, menu);
+		break;
+
+	case 3:
+		//anna.Render_3(&framebuffer, &camera, Color::RED, &zBuffer, menu);
+		lee.Render_3(&framebuffer, &camera, Color::BLUE, &zBuffer, menu);
+		//cleo.Render_3(&framebuffer, &camera, Color::GREEN, &zBuffer, menu);
+		break;
+	}
 	framebuffer.Render();
 }
 
@@ -234,29 +251,11 @@ void Application::Update(float seconds_elapsed)
 void Application::OnKeyPressed( SDL_KeyboardEvent event )
 {
 	// KEY CODES: https://wiki.libsdl.org/SDL2/SDL_Keycode
+
+	//Lab 2
 	switch (event.keysym.sym)
 	{
 	case SDLK_ESCAPE: exit(0); break;
-	case SDLK_0:
-		//Lab2
-		/*
-		anna = Entity(mesh_anna, Vector3(10, -9, 50), 0, Vector3(1, 1, 1), Vector3(30, 30, 30));
-		lee = Entity(mesh_lee, Vector3(0, -5, 0), 90 * DEG2RAD, Vector3(0, 1, 0), Vector3(15, 15, 15));
-		cleo = Entity(mesh_cleo, Vector3(-10, -9, 0), 180 * DEG2RAD, Vector3(0, 1, 0), Vector3(30, 30, 30));
-		camera = Camera();
-		camera.LookAt(Vector3(0, 0, -25), Vector3(0, 0, 0), Vector3(0, 1, 0));
-		camera.SetOrthographic(-20, 20, 10, -5, 1, 500);
-
-		color = Color::WHITE;
-		desp = 0.1;
-		scal = 0.005;
-		is_t = true;
-		fov = 45;
-
-		menu = 1;
-		menu_c = 1;
-		break;
-		*/
 	case SDLK_p:
 		camera.SetPerspective(fov * DEG2RAD, framebuffer.width / framebuffer.height, 1, 50);
 		break;
@@ -271,6 +270,10 @@ void Application::OnKeyPressed( SDL_KeyboardEvent event )
 
 	case SDLK_2:
 		menu = 2;
+		break;
+
+	case SDLK_3:
+		menu = 3;
 		break;
 
 	case SDLK_n:
