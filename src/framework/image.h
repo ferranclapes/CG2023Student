@@ -119,6 +119,10 @@ public:
 	void DrawTriangle(const Vector3& p0, const Vector3& p1, const Vector3& p2, const Color& c0, const Color& c1, const Color& c2, FloatImage* zBuffer);
 	void DrawHorizontal(int x0, int x1, int y, Vector3 p0, Vector3 p1, Vector3 p2, const Color& c0, const Color& c1, const Color& c2, FloatImage* zBuffer);
 
+	void DrawTriangle(const Vector3& p0, const Vector3& p1, const Vector3& p2, const Color& c0, const Color& c1, const Color& c2, FloatImage* zbBuffer, 
+						Image* texture, const Vector2& uv0, const Vector2& uv1, const Vector2& uv2);
+	void DrawHorizontal(int x0, int x1, int y, Vector3 p0, Vector3 p1, Vector3 p2, const Color& c0, const Color& c1, const Color& c2, FloatImage* zBuffer, 
+						Image* texture, const Vector2& uv0, const Vector2& uv1, const Vector2& uv2);
 	
 
 };

@@ -30,9 +30,10 @@ void Entity::Update(Vector3 trans, float angle, Vector3 rot, Vector3 sca, float 
 	model_matrix.ScaleLocal(sca);
 }
 
-void Entity::Render_3(Image* framebuffer, Camera* camera, const Color& c, FloatImage* zBuffer, int menu)
+void Entity::Render_3(Image* framebuffer, Camera* camera, const Color& c, FloatImage* zBuffer, Image* texture, int menu)
 {
 	const std::vector<Vector3>& vertices = mesh->GetVertices();
+	const std::vector<Vector2>& uvs = mesh->GetUVs();
 
 	for (int i = 0; i < this->mesh->GetVertices().size(); i += 3)
 	{
@@ -71,7 +72,11 @@ void Entity::Render_3(Image* framebuffer, Camera* camera, const Color& c, FloatI
 					break;
 
 				case 3:
-					framebuffer->DrawTriangle(vertex_screen, vertex_screen_1, vertex_screen_2, Color::RED, Color::BLUE, Color::GREEN, zBuffer);
+					framebuffer->DrawTriangle(vertex_screen, vertex_screen_1, vertex_screen_2, Color::RED, Color::BLUE, Color::GREEN, zBuffer, nullptr, Vector2(), Vector2(), Vector2());
+					break;
+
+				case 4:
+					framebuffer->DrawTriangle(vertex_screen, vertex_screen_1, vertex_screen_2, Color::RED, Color::BLUE, Color::GREEN, zBuffer, texture, uvs[i], uvs[i+1], uvs[i+2]);
 					break;
 				}
 			}
@@ -99,7 +104,8 @@ void Entity::Render_3(Image* framebuffer, Camera* camera, const Color& c, FloatI
 			Vector3 vertex_screen_2 = Vector3(((vertex_clip_2.x + 1) / 2) * (framebuffer->width - 1), ((vertex_clip_2.y + 1) / 2) * (framebuffer->height - 1), vertex_clip_2.z);
 
 			if (out == false || out_1 == false || out_2 == false)
-			{switch (menu)
+			{
+				switch (menu)
 				{
 				case 1:
 					framebuffer->DrawTriangle(vertex_screen, vertex_screen_1, vertex_screen_2, c);
@@ -110,8 +116,12 @@ void Entity::Render_3(Image* framebuffer, Camera* camera, const Color& c, FloatI
 					break;
 
 				case 3:
-					framebuffer->DrawTriangle(vertex_screen, vertex_screen_1, vertex_screen_2, Color::RED, Color::BLUE, Color::GREEN, zBuffer);
- 					break;
+					framebuffer->DrawTriangle(vertex_screen, vertex_screen_1, vertex_screen_2, Color::RED, Color::BLUE, Color::GREEN, zBuffer, nullptr, Vector2(), Vector2(), Vector2());
+					break;
+
+				case 4:
+					framebuffer->DrawTriangle(vertex_screen, vertex_screen_1, vertex_screen_2, Color::RED, Color::BLUE, Color::GREEN, zBuffer, texture, uvs[i], uvs[i + 1], uvs[i + 2]);
+					break;
 				}
 			}
 		}

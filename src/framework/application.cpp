@@ -37,7 +37,10 @@ void Application::Init(void)
 	bool mesh_l = mesh_lee->LoadOBJ("meshes/lee.obj");
 	bool mesh_a = mesh_anna->LoadOBJ("meshes/anna.obj");
 	bool mesh_c = mesh_cleo->LoadOBJ("meshes/cleo.obj");
-	if (/*toolbar_l == false || foto_l == false || */mesh_l == false || mesh_a == false|| mesh_c == false)
+	bool tex_a = texture_anna.LoadTGA("textures/anna_color_specular.tga");
+	bool tex_l = texture_lee.LoadTGA("textures/lee_color_specular.tga");
+	bool tex_c = texture_cleo.LoadTGA("textures/cleo_color_specular.tga");
+	if (/*toolbar_l == false || foto_l == false || */mesh_l == false || mesh_a == false|| mesh_c == false|| tex_a == false || tex_l == false || tex_c == false)
 	{
 		exit(0);
 	}
@@ -178,19 +181,25 @@ void Application::Render(void)
 	{
 	case 1:
 		//anna.Render_3(&framebuffer, &camera, Color::RED, &zBuffer, menu);
-		lee.Render_3(&framebuffer, &camera, Color::BLUE, &zBuffer, menu);
+		lee.Render_3(&framebuffer, &camera, Color::BLUE, &zBuffer, &texture_lee, menu);
 		//cleo.Render_3(&framebuffer, &camera, Color::GREEN, &zBuffer, menu);
 		break;
 
 	case 2:
 		//anna.Render_3(&framebuffer, &camera, Color::RED, &zBuffer, menu);
-		lee.Render_3(&framebuffer, &camera, Color::BLUE, &zBuffer, menu);
+		lee.Render_3(&framebuffer, &camera, Color::BLUE, &zBuffer, &texture_lee, menu);
 		//cleo.Render_3(&framebuffer, &camera, Color::GREEN, &zBuffer, menu);
 		break;
 
 	case 3:
 		//anna.Render_3(&framebuffer, &camera, Color::RED, &zBuffer, menu);
-		lee.Render_3(&framebuffer, &camera, Color::BLUE, &zBuffer, menu);
+		lee.Render_3(&framebuffer, &camera, Color::BLUE, &zBuffer, &texture_lee, menu);
+		//cleo.Render_3(&framebuffer, &camera, Color::GREEN, &zBuffer, menu);
+		break;
+
+	case 4:
+		//anna.Render_3(&framebuffer, &camera, Color::RED, &zBuffer, menu);
+		lee.Render_3(&framebuffer, &camera, Color::BLUE, &zBuffer, &texture_lee, menu);
 		//cleo.Render_3(&framebuffer, &camera, Color::GREEN, &zBuffer, menu);
 		break;
 	}
@@ -274,6 +283,10 @@ void Application::OnKeyPressed( SDL_KeyboardEvent event )
 
 	case SDLK_3:
 		menu = 3;
+		break;
+
+	case SDLK_4:
+		menu = 4;
 		break;
 
 	case SDLK_n:
