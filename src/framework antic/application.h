@@ -14,9 +14,9 @@ class Application
 public:
 	//Lab3:
 	FloatImage zBuffer;
-	Image* texture_lee;
-	Image* texture_anna;
-	Image* texture_cleo;
+	Image texture_lee;
+	Image texture_anna;
+	Image texture_cleo;
 
 
 	//Lab2:

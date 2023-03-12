@@ -1,7 +1,9 @@
 #include "application.h"
 #include "mesh.h"
 #include "shader.h"
-#include "utils.h" 
+#include "utils.h"
+#include "entity.h"
+#include "texture.h"
 
 Application::Application(const char* caption, int width, int height)
 {
@@ -34,19 +36,22 @@ void Application::Init(void)
 	mesh_anna = new Mesh();
 	mesh_lee = new Mesh();
 	mesh_cleo = new Mesh();
+	texture_anna = new Image();
+	texture_lee = new Image();
+	texture_cleo = new Image();
 	bool mesh_l = mesh_lee->LoadOBJ("meshes/lee.obj");
 	bool mesh_a = mesh_anna->LoadOBJ("meshes/anna.obj");
 	bool mesh_c = mesh_cleo->LoadOBJ("meshes/cleo.obj");
-	bool tex_a = texture_anna.LoadTGA("textures/anna_color_specular.tga");
-	bool tex_l = texture_lee.LoadTGA("textures/lee_color_specular.tga");
-	bool tex_c = texture_cleo.LoadTGA("textures/cleo_color_specular.tga");
+	bool tex_a = texture_anna->LoadTGA("textures/anna_color_specular.tga",true);
+	bool tex_l = texture_lee->LoadTGA("textures/lee_color_specular.tga", true);
+	bool tex_c = texture_cleo->LoadTGA("textures/cleo_color_specular.tga", true);
 	if (/*toolbar_l == false || foto_l == false || */mesh_l == false || mesh_a == false|| mesh_c == false|| tex_a == false || tex_l == false || tex_c == false)
 	{
 		exit(0);
 	}
-	anna = Entity(mesh_anna, Vector3(10, -9, -70), 0*DEG2RAD, Vector3(0, 1, 0), Vector3(30, 30, 30));
-	lee = Entity(mesh_lee, Vector3(0, -5, 0), 0 * DEG2RAD, Vector3(0, 1, 0), Vector3(15, 15, 15));
-	cleo = Entity(mesh_cleo, Vector3(-10, -9, 0), 0 * DEG2RAD, Vector3(0, 1, 0), Vector3(30, 30, 30));
+	anna = Entity(mesh_anna, Vector3(10, -9, -70), 0*DEG2RAD, Vector3(0, 1, 0), Vector3(30, 30, 30), texture_anna);
+	lee = Entity(mesh_lee, Vector3(0, -5, 0), 0 * DEG2RAD, Vector3(0, 1, 0), Vector3(15, 15, 15), texture_lee);
+	cleo = Entity(mesh_cleo, Vector3(-10, -9, 0), 0 * DEG2RAD, Vector3(0, 1, 0), Vector3(30, 30, 30), texture_cleo);
 	camera = Camera();
 	camera.LookAt(Vector3(0, 0, 10), Vector3(0, 0, 0), Vector3(0,1,0));
 	camera.SetOrthographic(20, -20, 10, -5, 1, -100);
@@ -64,143 +69,32 @@ void Application::Init(void)
 // Render one frame
 void Application::Render(void)
 {
-	//Tot lo del lab 1. Després cal descomentar-ho
-	/*framebuffer.DrawImagePixels(toolbar, 0, 0, true);
-
-
-	switch (menu) {
-	case 0:		//Borrar tot
-		framebuffer.Fill(Color::BLACK);
-		menu = -1;
-		break;
-
-	case 1:		//Linia DDA
-		if (pos->y == -1)
-		{
-			break;
-		}
-		framebuffer.DrawLineDDA(pos0->x, pos0->y, pos->x, pos->y, Color::WHITE);
-		pos0->set(-1, -1);
-		pos->set(-1, -1);
-		menu = -1;
-		break;
-
-	case 2:		//Linia Bresenham
-		if (pos->y == -1)
-		{
-			break;
-		}
-		framebuffer.DrawLineBresenham(pos0->x, pos0->y, pos->x, pos->y, Color::WHITE);
-		pos0->set(-1, -1);
-		pos->set(-1, -1);
-		menu = -1;
-		break;
-
-	case 3:		//Cercle buit
-		if (pos->y == -1)
-		{
-			break;
-		}
-		framebuffer.DrawCircle(pos0->x, pos0->y, pos->Distance(*pos0), Color::WHITE, false);
-		pos0->set(-1, -1);
-		pos->set(-1, -1);
-		menu = -1;
-		break;
-
-	case 4:		//Cercle ple
-		if (pos->y == -1)
-		{
-			break;
-		}
-		framebuffer.DrawLineDDA(pos0->x, pos0->y, pos->x, pos->y, color);
-		pos0->set(-1, -1);
-		pos->set(-1, -1);
-		menu = -1;
-		break;
-
-	case 2:
-
-		if (pos->y == -1)
-		{
-			break;
-		}
-		framebuffer.DrawLineBresenham(pos0->x, pos0->y, pos->x, pos->y, color);
-		pos0->set(-1, -1);
-		pos->set(-1, -1);
-		menu = -1;
-		break;
-
-	case 3:
-
-		if (pos->y == -1)
-		{
-			break;
-		}
-		framebuffer.DrawCircle(pos0->x, pos0->y, pos->Distance(*pos0), color, false);
-		pos0->set(-1, -1);
-		pos->set(-1, -1);
-		menu = -1;
-		break;
-
-	case 4:
-
-		if (pos->y == -1)
-		{
-			break;
-		}
-		framebuffer.DrawCircle(pos0->x, pos0->y, pos->Distance(*pos0), color, true);
-		pos0->set(-1, -1);
-		pos->set(-1, -1);
-		menu = -1;
-		break;
-
-	case 5:
-		break;
-
-	case 6:
-		framebuffer.DrawImagePixels(fruits, 0, 0, false);
-		framebuffer.DrawImagePixels(toolbar, 0, 0, true);
-		break;
-
-	case 7:
-		framebuffer.Fill(Color::BLACK);
-		for (int i = 0; i < num_particle; i++)
-		{
-			if (abs(particles[i].pos.Distance(particles[i].origin))> 75)
-			{
-				framebuffer.DrawLineBresenham(particles[i].pos.x, particles[i].pos.y, particles[i].pos.x - particles[i].size.x, particles[i].pos.y - particles[i].size.y, particles[i].color);
-
-			}
-		}
-		break;
-	}
-	*/
 	framebuffer.Fill(Color::BLACK);
 	zBuffer.Fill(100.0);
 	switch (menu)
 	{
 	case 1:
-		//anna.Render_3(&framebuffer, &camera, Color::RED, &zBuffer, menu);
-		lee.Render_3(&framebuffer, &camera, Color::BLUE, &zBuffer, &texture_lee, menu);
-		//cleo.Render_3(&framebuffer, &camera, Color::GREEN, &zBuffer, menu);
+		anna.Render_3(&framebuffer, &camera, Color::RED, &zBuffer, texture_anna, menu);
+		lee.Render_3(&framebuffer, &camera, Color::BLUE, &zBuffer, texture_lee, menu);
+		cleo.Render_3(&framebuffer, &camera, Color::GREEN, &zBuffer, texture_cleo, menu);
 		break;
 
 	case 2:
-		//anna.Render_3(&framebuffer, &camera, Color::RED, &zBuffer, menu);
-		lee.Render_3(&framebuffer, &camera, Color::BLUE, &zBuffer, &texture_lee, menu);
-		//cleo.Render_3(&framebuffer, &camera, Color::GREEN, &zBuffer, menu);
+		anna.Render_3(&framebuffer, &camera, Color::RED, &zBuffer, texture_anna, menu);
+		lee.Render_3(&framebuffer, &camera, Color::BLUE, &zBuffer, texture_lee, menu);
+		cleo.Render_3(&framebuffer, &camera, Color::GREEN, &zBuffer, texture_cleo, menu);
 		break;
 
 	case 3:
-		//anna.Render_3(&framebuffer, &camera, Color::RED, &zBuffer, menu);
-		lee.Render_3(&framebuffer, &camera, Color::BLUE, &zBuffer, &texture_lee, menu);
-		//cleo.Render_3(&framebuffer, &camera, Color::GREEN, &zBuffer, menu);
+		anna.Render_3(&framebuffer, &camera, Color::RED, &zBuffer, texture_anna, menu);
+		lee.Render_3(&framebuffer, &camera, Color::BLUE, &zBuffer, texture_lee, menu);
+		cleo.Render_3(&framebuffer, &camera, Color::GREEN, &zBuffer, texture_cleo, menu);
 		break;
 
 	case 4:
-		//anna.Render_3(&framebuffer, &camera, Color::RED, &zBuffer, menu);
-		lee.Render_3(&framebuffer, &camera, Color::BLUE, &zBuffer, &texture_lee, menu);
-		//cleo.Render_3(&framebuffer, &camera, Color::GREEN, &zBuffer, menu);
+		anna.Render_3(&framebuffer, &camera, Color::RED, &zBuffer, texture_anna, menu);
+		lee.Render_3(&framebuffer, &camera, Color::BLUE, &zBuffer, texture_lee, menu);
+		cleo.Render_3(&framebuffer, &camera, Color::GREEN, &zBuffer, texture_cleo, menu);
 		break;
 	}
 	framebuffer.Render();
@@ -238,27 +132,10 @@ void Application::Update(float seconds_elapsed)
 
 	}*/
 
-	//Tot lo del lab 1
-	/*if (menu == 7)
-	{
-		for (int i = 0; i < num_particle; i++)
-		{
-			if (time > 40)
-			{
-				time = 40;
-			}
-			particles[i].pos += particles[i].vel * time * seconds_elapsed;
-			if (particles[i].pos.Distance(particles[i].origin) >= particles[i].dest.Distance(particles[i].origin))
-			{
-				particles[i].pos = particles[i].origin;
-			}
-		}
-	}*/
 }
 
 //keyboard press event 
-void Application::OnKeyPressed( SDL_KeyboardEvent event )
-{
+void Application::OnKeyPressed(SDL_KeyboardEvent event) {
 	// KEY CODES: https://wiki.libsdl.org/SDL2/SDL_Keycode
 
 	//Lab 2
@@ -360,170 +237,10 @@ void Application::OnKeyPressed( SDL_KeyboardEvent event )
 		menu_c = 3;
 		break;
 	}
-
-	//Lab 1
-	/*switch (event.keysym.sym) {
-	case SDLK_ESCAPE: exit(0); break; // ESC key, kill the app
-
-		//A PARTIR D'AQUI COMENÇA EL CODI DELS ALUMNES
-
-	case SDLK_0:
-		menu = 0;
-		break;
-
-	case SDLK_1:		//Premer tecla 1 per linia dda
-		menu = 1;
-		break;
-
-	case SDLK_2:		//Premer tecla 2 per linia bresenham
-		menu = 2;
-		break;
-
-	case SDLK_3:		//Premer tecla 3 per cercle buit
-		menu = 3;
-		break;
-
-	case SDLK_4:		//Premer tecla 4 per cercle ple
-		menu = 4;
-		break;
-
-	case SDLK_5:		//Premer tecla 5 per dibuix lliure
-		menu = 5;
-		brush_size = 0;
-		break;
-
-	case SDLK_6:
-		menu = 6;
-		break;
-
-	case SDLK_7:
-		menu = 7;
-		for (int i = 0; i < num_particle; i++)
-		{
-			Particle particle;
-
-			particle.origin = Vector2(framebuffer.width / 2, framebuffer.height / 2);
-
-			particle.quartil = 1 + (rand() % 4);
-			int desti_rand = rand() % 2;
-			if (particle.quartil == 4)
-			{
-				if (desti_rand == 0)
-				{
-					particle.dest = Vector2(0, (framebuffer.height / 2) + (rand() % (framebuffer.height / 2)));
-				}
-				else
-				{
-					particle.dest = Vector2((rand() % (framebuffer.width / 2)), framebuffer.height);
-				}
-
-			}
-			else if (particle.quartil == 1)
-			{
-				if (desti_rand == 0)
-				{
-					particle.dest = Vector2(framebuffer.width, (framebuffer.height / 2) + (rand() % (framebuffer.height / 2)));
-				}
-				else
-				{
-					particle.dest = Vector2((framebuffer.width / 2) + (rand() % (framebuffer.width / 2)), framebuffer.height);
-				}
-			}
-			else if (particle.quartil == 2)
-			{
-				if (desti_rand == 0)
-				{
-					particle.dest = Vector2(framebuffer.width, (rand() % (framebuffer.height / 2)));
-				}
-				else
-				{
-					particle.dest = Vector2((framebuffer.width / 2) + (rand() % (framebuffer.width / 2)), 0);
-				}
-			}
-			else if (particle.quartil == 3)
-			{
-				if (desti_rand == 0)
-				{
-					particle.dest = Vector2(0, (rand() % (framebuffer.height / 2)));
-				}
-				else
-				{
-					particle.dest = Vector2((rand() % (framebuffer.width / 2)), 0);
-				}
-			}
-
-			particle.pos = particle.origin;
-
-			int size = 1 + (rand() % 30);
-			particle.size = Vector2(size * ((particle.dest.x - particle.origin.x) / particle.dest.Distance(particle.origin)),
-				size * ((particle.dest.y - particle.origin.y) / particle.dest.Distance(particle.origin)));
-			if (size > 25)
-			{
-				particle.color = Color::WHITE;
-
-				int aux_v = 4 + (rand() % 3);
-				particle.vel = Vector2((particle.size.x * aux_v) / aux_v, (particle.size.y * aux_v) / aux_v);
-			}
-			else if (size > 17)
-			{
-				particle.color = Color(20, 75, 120);
-
-				int aux_v = 4 + (rand() % 3);
-				particle.vel = Vector2((particle.size.x * aux_v) / aux_v, (particle.size.y * aux_v) / aux_v);
-			}
-			else if (size > 10)
-			{
-				particle.color = Color(120, 70, 20);
-
-				int aux_v = 1 + (rand() % 3);
-				particle.vel = Vector2((particle.size.x * aux_v) / aux_v, (particle.size.y * aux_v) / aux_v);
-			}
-			else
-			{
-				particle.color = Color::GRAY;
-
-				int aux_v = 1 + (rand() % 2);
-				particle.vel = Vector2((particle.size.x * aux_v) / aux_v, (particle.size.y * aux_v) / aux_v);
-			}
-			particles[i] = particle;
-		}
-		time = 5;
-		break;
-
-	case SDLK_LSHIFT:
-		color = framebuffer.GetPixel(mouse_position.x, mouse_position.y);
-		break;
-
-	case  SDLK_PLUS:
-		brush_size += 2;
-		break;
-
-	case SDLK_MINUS:
-		if (brush_size == 0)
-		{
-			break;
-		}
-		brush_size -= 2;
-		break;
-	}*/
-
 }
 
 void Application::OnMouseButtonDown( SDL_MouseButtonEvent event )
 {
-	//Lab 1
-	/*if (event.button == SDL_BUTTON_LEFT) {
-		if (pos0->x == -1 || this->es_primer_clic == true)
-		{
-			pos0->set(mouse_position.x, mouse_position.y);
-			es_primer_clic = false;
-		}
-		else
-		{
-			pos->set(mouse_position.x, mouse_position.y);
-			es_primer_clic = true;
-		}
-	}*/
 }
 
 void Application::OnMouseButtonUp( SDL_MouseButtonEvent event )
@@ -561,22 +278,6 @@ void Application::OnMouseMove(SDL_MouseButtonEvent event)
 		}
 	}
 	
-	//Lab 1
-	/*if (event.button == SDL_BUTTON_LEFT && menu == 5)
-	{
-		int x = mouse_position.x - brush_size / 2;
-		int y = mouse_position.y + brush_size / 2;
-		while (y >= mouse_position.y - brush_size / 2)
-		{
-			while (x <= mouse_position.x + brush_size / 2)
-			{
-				framebuffer.SetPixelSafe(x, y, color);
-				x++;
-			}
-			y--;
-			x = mouse_position.x - brush_size / 2;
-		}
-	}*/
 }
 
 void Application::OnFileChanged(const char* filename)

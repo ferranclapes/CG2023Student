@@ -895,67 +895,14 @@ void Image::DrawTriangle(const Vector3& p0, const Vector3& p1, const Vector3& p2
 {
 	std::vector<Cell> AET;
 	AET.resize(this->height);
-    
-    ScanLineBresenham(p0.x, p0.y, p1.x, p1.y, AET);
-    ScanLineBresenham(p0.x, p0.y, p2.x, p2.y, AET);
-    ScanLineBresenham(p1.x, p1.y, p2.x, p2.y, AET);
-    
-	for (int i = 0; i < AET.size(); i++)
-	{
-        if (AET[i].max_X > AET[i].min_X)
-        {
-            for (int j = AET[i].min_X; j < AET[i].max_X; j++)
-            {
-                Vector2 v0 = Vector2(p1.x - p0.x, p1.y - p0.y);
-                Vector2 v1 = Vector2(p2.x - p0.x, p2.y - p0.y);
-                Vector2 v2 = Vector2(j - p0.x, i - p0.y);
-                
-                float d00 = v0.Dot(v0);
-                float d01 = v0.Dot(v1);
-                float d11 = v1.Dot(v1);
-                float d20 = v2.Dot(v0);
-                float d21 = v2.Dot(v1);
-                float denom = d00 * d11 - d01 * d01;
-                float v = (d11 * d20 - d01 * d21) / denom;
-                clamp(v, 0, 1);
-                float w = (d00 * d21 - d01 * d20) / denom;
-                clamp(w, 0, 1);
-                float u = 1.0 - v - w;
-                clamp(u, 0, 1);
-                
-                v = v / (v+u+w);
-                w = w / (v+u+w);
-                u = u / (v+u+w);
-                
-                
-                Color c = c0 * u + c1 * v + c2 * w;
-                
-                float z_i = p0.z * u + p1.z * v + p2.z*w;
-                if (z_i < zBuffer->GetPixel(j, i)){
-                    SetPixelSafe(j, i, c) ;
-                    zBuffer->SetPixel(j, i, z_i);
-                }
-            }
-        }
-	}
-	
-}
-
-//3.4 TEXTURES
-void Image::DrawTriangle(const Vector3& p0, const Vector3& p1, const Vector3& p2, const Color& c0, const Color& c1, const Color& c2, FloatImage* zBuffer, Image* texture, const Vector2& uv0, const Vector2& uv1, const Vector2& uv2){
-	std::vector<Cell> AET;
-	AET.resize(this->height);
 
 	ScanLineBresenham(p0.x, p0.y, p1.x, p1.y, AET);
 	ScanLineBresenham(p0.x, p0.y, p2.x, p2.y, AET);
 	ScanLineBresenham(p1.x, p1.y, p2.x, p2.y, AET);
 
-	for (int i = 0; i < AET.size(); i++)
-	{
-		if (AET[i].max_X > AET[i].min_X)
-		{
-			for (int j = AET[i].min_X; j < AET[i].max_X; j++)
-			{
+	for (int i = 0; i < AET.size(); i++){
+		if (AET[i].max_X > AET[i].min_X){
+			for (int j = AET[i].min_X; j < AET[i].max_X; j++){
 				Vector2 v0 = Vector2(p1.x - p0.x, p1.y - p0.y);
 				Vector2 v1 = Vector2(p2.x - p0.x, p2.y - p0.y);
 				Vector2 v2 = Vector2(j - p0.x, i - p0.y);
@@ -982,24 +929,80 @@ void Image::DrawTriangle(const Vector3& p0, const Vector3& p1, const Vector3& p2
 
 				float z_i = p0.z * u + p1.z * v + p2.z * w;
 				if (z_i < zBuffer->GetPixel(j, i)) {
+					SetPixelSafe(j, i, c);
 					zBuffer->SetPixel(j, i, z_i);
-					if (texture == nullptr) {
-						SetPixelSafe(j, i, c);
-
-					}
-					else {
-						Vector2 uv0_tex = Vector2((uv0.x * texture->width - 1), (uv0.y * texture->height - 1));
-						Vector2 uv1_tex = Vector2((uv1.x * texture->width - 1), (uv1.y * texture->height - 1));
-						Vector2 uv2_tex = Vector2((uv2.x * texture->width - 1), (uv2.y * texture->height - 1));
-
-						float uv_x = (uv0_tex.x * u) + (uv1_tex.x * v) + (uv2_tex.x * w);
-						float uv_y = (uv0_tex.y * u) + (uv1_tex.y * v) + (uv2_tex.y * w);
-
-						Color color_tex = texture->GetPixelSafe(uv_x, uv_y);
-						SetPixelSafe(j, i, color_tex);
-					}
 				}
 			}
 		}
 	}
 }
+
+//3.4 TEXTURES
+void Image::DrawTriangle(const Vector3& p0, const Vector3& p1, const Vector3& p2, const Color& c0, const Color& c1, const Color& c2, FloatImage* zBuffer, Image* texture, const Vector2& uv0, const Vector2& uv1, const Vector2& uv2)
+{
+	std::vector<Cell> AET;
+	AET.resize(this->height);
+
+	for (int i = 0; i < AET.size(); i++)
+	{
+		AET[i].max_X = -1;
+		AET[i].min_X = this->width + 20;
+	}
+	ScanLineBresenham(p0.x, p0.y, p1.x, p1.y, AET);
+	ScanLineBresenham(p0.x, p0.y, p2.x, p2.y, AET);
+	ScanLineBresenham(p1.x, p1.y, p2.x, p2.y, AET);
+
+	for (int j = 0; j < AET.size(); j++)
+	{
+		if (AET[j].max_X > AET[j].min_X)
+		{
+			this->DrawHorizontal(AET[j].min_X, AET[j].max_X, j, p0, p1, p2, c0, c1, c2, zBuffer, texture, uv0, uv1, uv2);
+		}
+	}
+}
+
+void Image::DrawHorizontal(int x0, int x1, int y, Vector3 p0, Vector3 p1, Vector3 p2, const Color& c0, const Color& c1, const Color& c2, FloatImage* zBuffer, Image* texture, const Vector2& uv0, const Vector2& uv1, const Vector2& uv2)
+{
+	Vector2 v0 = Vector2(p1.x - p0.x, p1.y - p0.y);
+	Vector2 v1 = Vector2(p2.x - p0.x, p2.y - p0.y);
+	for (int x = x0; x <= x1; x++)
+	{
+		
+		Vector2 v2 = Vector2(x - p0.x, y - p0.y);
+
+		float d00 = v0.Dot(v0);
+		float d01 = v0.Dot(v1);
+		float d11 = v1.Dot(v1);
+		float d20 = v2.Dot(v0);
+		float d21 = v2.Dot(v1);
+		float denom = d00 * d11 - d01 * d01;
+		float v = (d11 * d20 - d01 * d21) / denom;
+		float w = (d00 * d21 - d01 * d20) / denom;
+		float u = 1.0 - v - w;
+		float z = p0.z * u + p1.z * v + p2.z * w; 
+		if (zBuffer->GetPixel(x, y) > z)
+		{
+			
+
+			Color c;
+			if (texture == nullptr)
+			{
+				Vector3 weights = Vector3(u, v, w);
+				float sum = v + u + w;
+				weights.Clamp(0, 1);
+				u = weights.x / sum;
+				v = weights.y / sum;
+				w = weights.z / sum;
+				Color c = c0 * u + c1 * v + c2 * w;
+			} 
+			else
+			{
+ 				Vector2 uv = uv0 * u + uv1 * v + uv2 * w;
+				uv *= Vector2(this->width, this->height);
+				Color c = texture->GetPixelSafe(uv.x, uv.y);
+			}
+			SetPixelSafe(x, y, c);
+			zBuffer->SetPixel(x, y, z);
+		}
+	}
+} 

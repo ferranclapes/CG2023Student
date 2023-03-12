@@ -1,19 +1,17 @@
 #include "entity.h"
 #include "image.h"
 #include "camera.h"
-#include "texture.h"
 
 
 Entity::Entity()
 {
 	this->mesh = new Mesh();
 	this->model_matrix = Matrix44();
-
 }
-Entity::Entity(Mesh* mesh, Vector3 trans, float angle, Vector3 rot, Vector3 sca, Image*texture)
+Entity::Entity(Mesh* mesh, Vector3 trans, float angle, Vector3 rot, Vector3 sca)
 {
 	this->mesh = mesh;
-	this->texture = texture;
+
 	model_matrix.SetIdentity();
 	model_matrix.Scale(sca);
 	model_matrix.Rotate(angle, rot);
@@ -74,7 +72,7 @@ void Entity::Render_3(Image* framebuffer, Camera* camera, const Color& c, FloatI
 					break;
 
 				case 3:
-                        framebuffer->DrawTriangle(vertex_screen, vertex_screen_1, vertex_screen_2, Color::RED, Color::BLUE, Color::GREEN, zBuffer); //, nullptr, Vector2(), Vector2(), Vector2());
+					framebuffer->DrawTriangle(vertex_screen, vertex_screen_1, vertex_screen_2, Color::RED, Color::BLUE, Color::GREEN, zBuffer);
 					break;
 
 				case 4:
@@ -118,7 +116,7 @@ void Entity::Render_3(Image* framebuffer, Camera* camera, const Color& c, FloatI
 					break;
 
 				case 3:
-                        framebuffer->DrawTriangle(vertex_screen, vertex_screen_1, vertex_screen_2, Color::RED, Color::BLUE, Color::GREEN, zBuffer);//, nullptr, Vector2(), Vector2(), Vector2());
+					framebuffer->DrawTriangle(vertex_screen, vertex_screen_1, vertex_screen_2, Color::RED, Color::BLUE, Color::GREEN, zBuffer);
 					break;
 
 				case 4:
